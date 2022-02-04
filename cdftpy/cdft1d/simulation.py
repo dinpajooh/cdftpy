@@ -9,7 +9,7 @@ from cdftpy.cdft1d.coulomb import compute_long_range_coul_pot_kspace, compute_lo
     compute_short_range_coul_pot_rspace, compute_coulomb_potential
 from cdftpy.cdft1d.exceptions import ConvergenceError
 from cdftpy.cdft1d.io_utils import read_solute, read_key_value
-from cdftpy.cdft1d.potential import compute_lj_potential_mod, compute_lj_potential
+from cdftpy.cdft1d.potential import compute_lj_potential_mod, compute_lj_potential, compute_lj_nano_potential
 from cdftpy.cdft1d.units import kb
 import cdftpy.cdft1d.rism as rism
 import cdftpy.cdft1d.rsdft as rsdft
@@ -150,10 +150,12 @@ class IonSolvation():
     def vs_r(self):
         vcs_r = compute_short_range_coul_pot_rspace(self.charge, self.qv,
                                                     self.rgrid, r_s=self.rcoul)
-        if self.bridge:
-            vlj_r = compute_lj_potential_mod(self.sigma, self.eps, self.sig_v, self.eps_v, self.rgrid)
-        else:
-            vlj_r = compute_lj_potential(self.sigma, self.eps, self.sig_v, self.eps_v, self.rgrid)
+
+        vlj_r = compute_lj_nano_potential(self.sigma, self.eps, self.sig_v, self.eps_v, self.rgrid)
+        #if self.bridge:
+        #     vlj_r = compute_lj_potential_mod(self.sigma, self.eps, self.sig_v, self.eps_v, self.rgrid)
+        #else:
+        #    vlj_r = compute_lj_potential(self.sigma, self.eps, self.sig_v, self.eps_v, self.rgrid)
         vs_r = vcs_r + vlj_r
 
         return self.beta * vs_r
